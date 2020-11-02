@@ -17,10 +17,10 @@ matrix:
       env: CONF="--enable-debug --disable-jit"
     - os: linux
       env: CONF=--disable-shared
-    - os: osx
-      env: CC=cc
-    - os: osx
-      env: MAKE=cmake
+    #- os: osx
+    #  env: CC=cc
+    #- os: osx
+    #  env: CMAKE=1
   # cmake conf is broken
   allow_failures:
     - env: CONF=-DBUILD_SHARED_LIBS=ON MAKE=cmake CC=gcc
