@@ -5,8 +5,6 @@ libpcre2-*.pc
 libtool
 pcre2-config
 src/.deps
-src/config.h
-src/pcre2.h
 src/stamp-h1
 
 .libs
