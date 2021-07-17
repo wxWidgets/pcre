@@ -15,7 +15,6 @@ src/stamp-h1
 *.a
 *.la
 src/.dirstamp
-src/pcre2_chartables.c
 
 pcre2grep
 pcre2test
