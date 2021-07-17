@@ -1,3 +1,19 @@
+/* Manually edited version used for building PCRE as part of wxWidgets. */
+
+#include "wx/chartype.h"
+
+#if !wxUSE_UNICODE || wxUSE_UNICODE_UTF8
+    #define PCRE2_CODE_UNIT_WIDTH 8
+#elif wxUSE_UNICODE_UTF16
+    #define PCRE2_CODE_UNIT_WIDTH 16
+#else
+    #define PCRE2_CODE_UNIT_WIDTH 32
+#endif
+
+#if wxUSE_UNICODE
+    #define SUPPORT_UNICODE 1
+#endif
+
 /* src/config.h.  Generated from config.h.in by configure.  */
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
