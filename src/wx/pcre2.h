@@ -89,7 +89,40 @@ the relevant values must be provided by some other means. */
 
 #include <limits.h>
 #include <stdlib.h>
+
+/* Versions of MSVC < 2013 don't have inttypes.h, but 2010 and later have
+stdint.h, which is sufficient here. For even older versions we have to use
+wx replacements. */
+#if defined(_MSC_VER)
+    #if _MSC_VER < 1600
+        #include "wx/types.h"
+        #define wxNO_INTTYPES_H
+
+        #define INT8_MAX    0x7f
+        #define UINT8_MAX   0xff
+
+        #define INT16_MAX   0x7fff
+        #define UINT16_MAX  0xffff
+
+        #define INT32_MAX   0x7fffffff
+        #define UINT32_MAX  0xffffffff
+
+        typedef wxInt8 int8_t;
+        typedef wxUint8 uint8_t;
+
+        typedef wxInt16 int16_t;
+        typedef wxUint16 uint16_t;
+
+        typedef wxInt32 int32_t;
+        typedef wxUint32 uint32_t;
+    #elif _MSC_VER < 1800
+        #include <stdint.h>
+        #define wxNO_INTTYPES_H
+    #endif
+#endif
+#ifndef wxNO_INTTYPES_H
 #include <inttypes.h>
+#endif
 
 /* Allow for C++ users compiling this directly. */
 
