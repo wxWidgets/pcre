@@ -1123,8 +1123,8 @@ do
       ncode += 1 + LINK_SIZE;
 
       /* Skip irrelevant items */
-
-      for (BOOL done = FALSE; !done;)
+      BOOL done;
+      for (done = FALSE; !done;)
         {
         switch (*ncode)
           {

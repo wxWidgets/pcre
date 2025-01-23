@@ -5670,6 +5670,8 @@ BOOL previous_matched_char = FALSE;
 BOOL reset_caseful = FALSE;
 const uint8_t *cbits = cb->cbits;
 uint8_t classbits[32];
+int i;
+uint32_t ui;
 
 /* We can fish out the UTF setting once and for all into a BOOL, but we must
 not do this for other options (e.g. PCRE2_EXTENDED) that may change dynamically
@@ -6116,9 +6118,9 @@ for (;; pptr++)
         if (taboffset >= 0)
           {
           if (tabopt >= 0)
-            for (int i = 0; i < 32; i++) pbits[i] |= cbits[(int)i + taboffset];
+            for (i = 0; i < 32; i++) pbits[i] |= cbits[(int)i + taboffset];
           else
-            for (int i = 0; i < 32; i++) pbits[i] &= ~cbits[(int)i + taboffset];
+            for (i = 0; i < 32; i++) pbits[i] &= ~cbits[(int)i + taboffset];
           }
 
         /* Now see if we need to remove any special characters. An option
@@ -6132,9 +6134,9 @@ for (;; pptr++)
         being built and we are done. */
 
         if (local_negate)
-          for (int i = 0; i < 32; i++) classbits[i] |= (uint8_t)(~pbits[i]);
+          for (i = 0; i < 32; i++) classbits[i] |= (uint8_t)(~pbits[i]);
         else
-          for (int i = 0; i < 32; i++) classbits[i] |= pbits[i];
+          for (i = 0; i < 32; i++) classbits[i] |= pbits[i];
 
         /* Every class contains at least one < 256 character. */
 
@@ -6173,22 +6175,22 @@ for (;; pptr++)
         switch(escape)
           {
           case ESC_d:
-          for (int i = 0; i < 32; i++) classbits[i] |= cbits[i+cbit_digit];
+          for (i = 0; i < 32; i++) classbits[i] |= cbits[i+cbit_digit];
           break;
 
           case ESC_D:
           should_flip_negation = TRUE;
-          for (int i = 0; i < 32; i++)
+          for (i = 0; i < 32; i++)
             classbits[i] |= (uint8_t)(~cbits[i+cbit_digit]);
           break;
 
           case ESC_w:
-          for (int i = 0; i < 32; i++) classbits[i] |= cbits[i+cbit_word];
+          for (i = 0; i < 32; i++) classbits[i] |= cbits[i+cbit_word];
           break;
 
           case ESC_W:
           should_flip_negation = TRUE;
-          for (int i = 0; i < 32; i++)
+          for (i = 0; i < 32; i++)
             classbits[i] |= (uint8_t)(~cbits[i+cbit_word]);
           break;
 
@@ -6200,12 +6202,12 @@ for (;; pptr++)
           longer treat \s and \S specially. */
 
           case ESC_s:
-          for (int i = 0; i < 32; i++) classbits[i] |= cbits[i+cbit_space];
+          for (i = 0; i < 32; i++) classbits[i] |= cbits[i+cbit_space];
           break;
 
           case ESC_S:
           should_flip_negation = TRUE;
-          for (int i = 0; i < 32; i++)
+          for (i = 0; i < 32; i++)
             classbits[i] |= (uint8_t)(~cbits[i+cbit_space]);
           break;
 
@@ -6450,7 +6452,7 @@ for (;; pptr++)
         if (negate_class && !xclass_has_prop)
           {
           /* Using 255 ^ instead of ~ avoids clang sanitize warning. */
-          for (int i = 0; i < 32; i++) classbits[i] = 255 ^ classbits[i];
+          for (i = 0; i < 32; i++) classbits[i] = 255 ^ classbits[i];
           }
         memcpy(code, classbits, 32);
         code = class_uchardata + (32 / sizeof(PCRE2_UCHAR));
@@ -6476,7 +6478,7 @@ for (;; pptr++)
       if (negate_class)
         {
        /* Using 255 ^ instead of ~ avoids clang sanitize warning. */
-       for (int i = 0; i < 32; i++) classbits[i] = 255 ^ classbits[i];
+       for (i = 0; i < 32; i++) classbits[i] = 255 ^ classbits[i];
        }
       memcpy(code, classbits, 32);
       }
@@ -6550,7 +6552,7 @@ for (;; pptr++)
     verbarglen = *(++pptr);
     verbculen = 0;
     tempcode = code++;
-    for (int i = 0; i < (int)verbarglen; i++)
+    for (i = 0; i < (int)verbarglen; i++)
       {
       meta = *(++pptr);
 #ifdef SUPPORT_UNICODE
@@ -6600,7 +6602,6 @@ for (;; pptr++)
     bravalue = OP_COND;
       {
       int count, index;
-      unsigned int i;
       PCRE2_SPTR name;
       named_group *ng = cb->named_groups;
       uint32_t length = *(++pptr);
@@ -6614,7 +6615,7 @@ for (;; pptr++)
       this name is duplicated. If it is not duplicated, we can handle it as a
       numerical group. */
 
-      for (i = 0; i < cb->names_found; i++, ng++)
+      for (ui = 0; ui < cb->names_found; ui++, ng++)
         {
         if (length == ng->length &&
             PRIV(strncmp)(name, ng->name, length) == 0)
@@ -6635,18 +6636,18 @@ for (;; pptr++)
       dealing with R<digits>, which is treated as a recursion test by number.
       */
 
-      if (i >= cb->names_found)
+      if (ui >= cb->names_found)
         {
         groupnumber = 0;
         if (meta == META_COND_RNUMBER)
           {
-          for (i = 1; i < length; i++)
+          for (ui = 1; ui < length; ui++)
             {
-            groupnumber = groupnumber * 10 + name[i] - CHAR_0;
+            groupnumber = groupnumber * 10 + name[ui] - CHAR_0;
             if (groupnumber > MAX_GROUP_NUMBER)
               {
               *errorcodeptr = ERR61;
-              cb->erroroffset = offset + i;
+              cb->erroroffset = offset + ui;
               return 0;
               }
             }
@@ -7036,7 +7037,7 @@ for (;; pptr++)
       this name is duplicated. */
 
       groupnumber = 0;
-      for (unsigned int i = 0; i < cb->names_found; i++, ng++)
+      for (ui = 0; ui < cb->names_found; ui++, ng++)
         {
         if (length == ng->length &&
             PRIV(strncmp)(name, ng->name, length) == 0)
@@ -7392,7 +7393,7 @@ for (;; pptr++)
           *lengthptr += delta;
           }
 
-        else for (int i = 0; i < replicate; i++)
+        else for (i = 0; i < replicate; i++)
           {
           memcpy(code, previous, CU2BYTES(1 + LINK_SIZE));
           previous = code;
@@ -7571,7 +7572,7 @@ for (;; pptr++)
                 reqcu = firstcu;
                 reqcuflags = firstcuflags;
                 }
-              for (uint32_t i = 1; i < repeat_min; i++)
+              for (ui = 1; ui < repeat_min; ui++)
                 {
                 memcpy(code, previous, CU2BYTES(len));
                 code += len;
@@ -7613,14 +7614,14 @@ for (;; pptr++)
 
           /* This is compiling for real */
 
-          else for (uint32_t i = repeat_max; i >= 1; i--)
+          else for (ui = repeat_max; ui >= 1; ui--)
             {
             *code++ = OP_BRAZERO + repeat_type;
 
             /* All but the final copy start a new nesting, maintaining the
             chain of brackets outstanding. */
 
-            if (i != 1)
+            if (ui != 1)
               {
               int linkoffset;
               *code++ = OP_BRA;

@@ -2959,8 +2959,8 @@ for (;;)
         /* Check for repeating a recursion without advancing the subject
         pointer or last used character. This should catch convoluted mutual
         recursions. (Some simple cases are caught at compile time.) */
-
-        for (dfa_recursion_info *ri = mb->recursive;
+        dfa_recursion_info* ri;
+        for (ri = mb->recursive;
              ri != NULL;
              ri = ri->prevrec)
           {
